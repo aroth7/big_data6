@@ -6,7 +6,6 @@ import numpy as np
 f = open('loans_ridge.csv', 'r', encoding="utf8")
 data = pd.read_csv(f)
 # %% ADD 10 VARIABLES RELATEDTO TEXT ANALYSIS
-
 # pos and neg words
 pos_words = ['years', 'children', 'married', 'help', 'lives', 'income', 'old', 'husband', 'living', 'selling', 'kiva']
 neg_words = ['loan', 'business', 'buy', 'family', 'work', 'house', 'store', 'improve']
@@ -77,8 +76,9 @@ data =  data.assign(paid=lambda row: 1 if row.status is 'paid' else 0,
 # %%
 # original features to drop not that have added new ones
 # NOTE: not doing anything with location_town or activity
+# NOTE: droping paid_amount bc it is null for 10714 rows which is leading to absolute nightmares with type issues in OLS
 drop_list = ['description_texts_en', 'id', 'location_town', 'borrowers_borrower_gender', 'sector', 'location_country', 
-            'activity', 'status']
+            'activity', 'status', 'paid_amount']
 
 # also drop columns for individual words (but not indicators)
 drop_list += pos_words

@@ -4,6 +4,7 @@ from math import log
 from collections import defaultdict, Counter
 import random
 import numpy as np
+import pandas as pd
 
 # set random seed so that random draws are the same each time
 random.seed(12409)
@@ -11,16 +12,19 @@ random.seed(12409)
 # %%
 # compute ridge estimates given X, y, and Lambda
 def ridge(X, y, fLambda):
-	
-	# TODO: compute afBeta
-	
-	#return afBeta
-    return
+    # split into different parts so easier to debug
+    inside_parens = np.dot(X.transpose(), X) + np.multiply(fLambda, np.identity(X.shape[1]))
+    inverse_of_inside = np.linalg.inv(inside_parens)
+    first_dot_product = np.dot(inverse_of_inside, X.transpose())
+    afBeta = np.dot(first_dot_product, y)
+    return afBeta
 
 loans = []
 # %%
 # NOTE: changed this to processed_data.csv because loans_ridge doesn't include all our variables
 f = open('processed_data.csv', 'r')
+# data = pd.read_csv(f)
+
 reader = csv.reader(f)
 header = next(reader)
 
@@ -30,8 +34,8 @@ testing_X = []
 testing_Y = []
 
 for i, row in enumerate(reader):
-    y = float(row[0])
-    x = [float(val) for val in row[1:]]
+    y = row[0]
+    x = [float(val) for val in row]
 
 
     rando = random.randint(0,1)
