@@ -39,7 +39,7 @@ data['positive_sentiment'] = data[pos_words].sum(axis=1)
 # add indicator for if description is overall pos or neg
 data['overall_positive'] = (data['positive_sentiment'] > data['negative_sentiment']) * 1 # cast to int
 
-# data = data.assign(description_length= lambda row: len(str(row.description_texts_en).split()))
+data['description_length'] = data['description_texts_en'].apply(lambda x: len(str(x).split()))
 
 # add indicators for if description is especially pos or especially neg
 # data['high_negative_sentiment'] = data['negative_sentiment'].apply(lambda x : 1 if x > 4 else 0)
@@ -75,24 +75,24 @@ data =  data.assign(is_health=lambda row: 1 if row.sector is 'Health' else 0,
    
 for index, row in data.iterrows():
     country = row['location_country']
-    country_africa = ['congo', 'cote']
-    country_asia = ['timor', 'myanmar', 'lao']
+    country_africa = ['Congo', 'Cote']
+    country_asia = ['Timor', 'Myanmar', 'Lao']
     country_europe = ['Kosovo']
-    if any(substring in country.lower() for substring in country_africa):
+    if any(substring in country for substring in country_africa):
         data.at[index, 'african'] = 1
-        data.at[index, 'asia'] = 0
+        data.at[index, 'asian'] = 0
         data.at[index, 'north_american'] = 0
         data.at[index, 'south_american'] = 0
         data.at[index, 'european'] = 0
-    elif any(substring in country.lower() for substring in country_asia):
+    elif any(substring in country for substring in country_asia):
         data.at[index, 'african'] = 0
-        data.at[index, 'asia'] = 1
+        data.at[index, 'asian'] = 1
         data.at[index, 'north_american'] = 0
         data.at[index, 'south_american'] = 0
         data.at[index, 'european'] = 0
     elif any(substring in country for substring in country_europe):
         data.at[index, 'african'] = 0
-        data.at[index, 'asia'] = 0
+        data.at[index, 'asian'] = 0
         data.at[index, 'north_american'] = 0
         data.at[index, 'south_american'] = 0
         data.at[index, 'european'] = 1
@@ -100,37 +100,37 @@ for index, row in data.iterrows():
         continent = country_to_continent(country)
         if continent == 'Africa':
             data.at[index, 'african'] = 1
-            data.at[index, 'asia'] = 0
+            data.at[index, 'asian'] = 0
             data.at[index, 'north_american'] = 0
             data.at[index, 'south_american'] = 0
             data.at[index, 'european'] = 0
         elif continent == 'Asia':
             data.at[index, 'african'] = 0
-            data.at[index, 'asia'] = 1
+            data.at[index, 'asian'] = 1
             data.at[index, 'north_american'] = 0
             data.at[index, 'south_american'] = 0
             data.at[index, 'european'] = 0
         elif continent == 'North America':
             data.at[index, 'african'] = 0
-            data.at[index, 'asia'] = 0
+            data.at[index, 'asian'] = 0
             data.at[index, 'north_american'] = 1
             data.at[index, 'south_american'] = 0
             data.at[index, 'european'] = 0
         elif continent == 'South America':
             data.at[index, 'african'] = 0
-            data.at[index, 'asia'] = 0
+            data.at[index, 'asian'] = 0
             data.at[index, 'north_american'] = 0
             data.at[index, 'south_american'] = 1
             data.at[index, 'european'] = 0
         elif continent == 'Europe':
             data.at[index, 'african'] = 0
-            data.at[index, 'asia'] = 0
+            data.at[index, 'asian'] = 0
             data.at[index, 'north_american'] = 0
             data.at[index, 'south_american'] = 0
             data.at[index, 'european'] = 1
         else: 
             data.at[index, 'african'] = 0
-            data.at[index, 'asia'] = 0
+            data.at[index, 'asian'] = 0
             data.at[index, 'north_american'] = 0
             data.at[index, 'south_american'] = 0
             data.at[index, 'european'] = 0
