@@ -73,7 +73,7 @@ data =  data.assign(is_health=lambda row: 1 if row.sector is 'Health' else 0,
 
     
 for index, row in data.iterrows():
-    country = row['country']
+    country = row['location_country']
     country_africa = ['congo', 'cote']
     country_asia = ['timor', 'myanmar', 'lao']
     if any(substring in country.lower() for substring in country_africa):
