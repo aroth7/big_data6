@@ -23,7 +23,6 @@ loans = []
 # %%
 # NOTE: changed this to processed_data.csv because loans_ridge doesn't include all our variables
 f = open('processed_data.csv', 'r')
-# data = pd.read_csv(f)
 
 reader = csv.reader(f)
 header = next(reader)

@@ -37,12 +37,13 @@ for p in pos_words:
 data['positive_sentiment'] = data[pos_words].sum(axis=1)
 
 # add indicator for if description is overall pos or neg
-data['overall_sentiment'] = (data['positive_sentiment'] > data['negative_sentiment']) * 1 # cast to int
+data['overall_positive'] = (data['positive_sentiment'] > data['negative_sentiment']) * 1 # cast to int
+
+# data = data.assign(description_length= lambda row: len(str(row.description_texts_en).split()))
 
 # add indicators for if description is especially pos or especially neg
 # data['high_negative_sentiment'] = data['negative_sentiment'].apply(lambda x : 1 if x > 4 else 0)
 # data['high_positive_sentiment'] = data['positive_sentiment'].apply(lambda x : 1 if x > 4  else 0)
-
 # %% ADD 9 FACTOR VARIABLES (for gender, country, sector)
 
 data['borrowers_borrower_gender'] = data['borrowers_borrower_gender'].astype(str)
@@ -71,11 +72,12 @@ data =  data.assign(is_health=lambda row: 1 if row.sector is 'Health' else 0,
            is_food=lambda row: 1 if row.sector is 'Food' else 0,
            is_housing=lambda row: 1 if row.sector is 'Housing' else 0)
 
-    
+   
 for index, row in data.iterrows():
     country = row['location_country']
     country_africa = ['congo', 'cote']
     country_asia = ['timor', 'myanmar', 'lao']
+    country_europe = ['Kosovo']
     if any(substring in country.lower() for substring in country_africa):
         data.at[index, 'african'] = 1
         data.at[index, 'asia'] = 0
@@ -88,6 +90,12 @@ for index, row in data.iterrows():
         data.at[index, 'north_american'] = 0
         data.at[index, 'south_american'] = 0
         data.at[index, 'european'] = 0
+    elif any(substring in country for substring in country_europe):
+        data.at[index, 'african'] = 0
+        data.at[index, 'asia'] = 0
+        data.at[index, 'north_american'] = 0
+        data.at[index, 'south_american'] = 0
+        data.at[index, 'european'] = 1
     else: 
         continent = country_to_continent(country)
         if continent == 'Africa':
@@ -156,18 +164,6 @@ data.drop(drop_list, axis=1, inplace=True)
 # move days_until_funded to first column so is easier to access later
 days = data.pop('days_until_funded')
 data.insert(0, 'days_until_funded', days)
-
-# convert all columns that added into floats so don't run into issues with matrix math
-cols = ['contains_old', 'contains_improve', 'contains_help', 'contains_buy',
-       'contains_loan', 'negative_sentiment', 'positive_sentiment',
-       'overall_sentiment', 'high_negative_sentiment',
-       'high_positive_sentiment', 'is_female', 'is_bulgaria', 'is_iraq',
-       'is_zambia', 'is_thailand', 'is_health', 'is_ed', 'is_arts',
-       'is_housing', 'paid', 'refunded', 'defaulted', 'in_repayment']
-
-for col in cols:
-    data[col] = data[col].astype(int)
-
 
 # %%
 # code to determine which countries/sectors have higher and lowest avg days_until_funded
