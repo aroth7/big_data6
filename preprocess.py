@@ -52,25 +52,35 @@ data['sector'] = data['sector'].astype(str)
 data['status'] = data['status'].astype(str)
 
 # dummy for gender
-data = data.assign(is_female= lambda row: 1 if row.borrowers_borrower_gender is 'F' else 0)
+data['is_female'] = data['borrowers_borrower_gender'].apply(lambda x: 1 if x == 'F' else 0)
 
 # dummies for country = iraq and country = bulgaria,because those countries have a much higher avg_days until funded
 # (especially bulgaria)
-data =  data.assign(is_bulgaria= lambda row: 1 if row.location_country is 'Bulgaria' else 0,
-           is_iraq= lambda row: 1 if row.location_country is 'Iraq' else 0)
+data['is_bulgaria'] = data['location_country'].apply(lambda x: 1 if 'bulgaria' in x.lower() else 0)
+data['is_iraq'] = data['location_country'].apply(lambda x: 1 if 'iraq' in x.lower() else 0)
+# data =  data.assign(is_bulgaria= lambda row: 1 if row.location_country is 'Bulgaria' else 0,
+#            is_iraq= lambda row: 1 if row.location_country is 'Iraq' else 0)
 
 # dummies for country = zambia and country = thailand because those 2 have the lowest avg days_until_funded
-data =  data.assign(is_zambia= lambda row: 1 if row.location_country is 'Zambia' else 0,
-           is_thailand= lambda row: 1 if row.location_country is 'Thailand' else 0)
+data['is_zambia'] = data['location_country'].apply(lambda x: 1 if 'zambia' in x.lower() else 0)
+data['is_thailand'] = data['location_country'].apply(lambda x: 1 if 'thailand' in x.lower() else 0)
+# data =  data.assign(is_zambia= lambda row: 1 if row.location_country is 'Zambia' else 0,
+#            is_thailand= lambda row: 1 if row.location_country is 'Thailand' else 0)
 
 # dummies for sectors with avg days_until_funded < 1 (health, education, arts, agriculture, and food) as well
 # as sector with highest avg days_until_funded (housing)
-data =  data.assign(is_health=lambda row: 1 if row.sector is 'Health' else 0,
-           is_ed=lambda row: 1 if row.sector is 'Education' else 0,
-           is_arts=lambda row: 1 if row.sector is 'Arts' else 0,
-           is_agriculture=lambda row: 1 if row.sector is 'Agriculture' else 0,
-           is_food=lambda row: 1 if row.sector is 'Food' else 0,
-           is_housing=lambda row: 1 if row.sector is 'Housing' else 0)
+data['is_health'] = data['sector'].apply(lambda x: 1 if x == 'Health' else 0)
+data['is_education'] = data['sector'].apply(lambda x: 1 if x == 'Education' else 0)
+data['is_arts'] = data['sector'].apply(lambda x: 1 if x == 'Arts' else 0)
+data['is_agriculture'] = data['sector'].apply(lambda x: 1 if x == 'Agriculture' else 0)
+data['is_food'] = data['sector'].apply(lambda x: 1 if x == 'Food' else 0)
+data['is_housing'] = data['sector'].apply(lambda x: 1 if x == 'Housing' else 0)
+# data =  data.assign(is_health=lambda row: 1 if row.sector == 'Health' else 0,
+#            is_ed=lambda row: 1 if row.sector == 'Education' else 0,
+#            is_arts=lambda row: 1 if row.sector == 'Arts' else 0,
+#            is_agriculture=lambda row: 1 if row.sector == 'Agriculture' else 0,
+#            is_food=lambda row: 1 if row.sector == 'Food' else 0,
+#            is_housing=lambda row: 1 if row.sector == 'Housing' else 0)
 
    
 for index, row in data.iterrows():
@@ -136,10 +146,14 @@ for index, row in data.iterrows():
             data.at[index, 'european'] = 0
 
 # create dummies for different statuses (paid, refunded, defaulted, in_repayment)
-data =  data.assign(paid=lambda row: 1 if row.status is 'paid' else 0,
-           refunded=lambda row: 1 if row.status is 'refunded' else 0,
-           defaulted=lambda row: 1 if row.status is 'defaulted' else 0,
-           in_repayment=lambda row: 1 if row.status is 'in_repayment' else 0)
+data['paid'] = data['status'].apply(lambda x: 1 if x == 'paid' else 0)
+data['refunded'] = data['status'].apply(lambda x: 1 if x == 'refunded' else 0)
+data['defaulted'] = data['status'].apply(lambda x: 1 if x == 'defaulted' else 0)
+data['in_repayment'] = data['status'].apply(lambda x: 1 if x == 'in_repayment' else 0)
+# data =  data.assign(paid=lambda row: 1 if row.status == 'paid' else 0,
+#            refunded=lambda row: 1 if row.status == 'refunded' else 0,
+#            defaulted=lambda row: 1 if row.status == 'defaulted' else 0,
+#            in_repayment=lambda row: 1 if row.status == 'in_repayment' else 0)
 
 
 # %%
@@ -165,26 +179,28 @@ data.drop(drop_list, axis=1, inplace=True)
 days = data.pop('days_until_funded')
 data.insert(0, 'days_until_funded', days)
 
+data.to_csv('processed_data.csv')
+
 # %%
 # code to determine which countries/sectors have higher and lowest avg days_until_funded
 
 #country
-countries = data['location_country'].unique()
-avg_days_per_country = {}
-avg_days_per_country_lst = []
-for country in countries:
-    avg_days_per_country_lst.append(data[data["location_country"] == country]["days_until_funded"].mean())
-    avg_days_per_country[country] = data[data["location_country"] == country]["days_until_funded"].mean()
+# countries = data['location_country'].unique()
+# avg_days_per_country = {}
+# avg_days_per_country_lst = []
+# for country in countries:
+#     avg_days_per_country_lst.append(data[data["location_country"] == country]["days_until_funded"].mean())
+#     avg_days_per_country[country] = data[data["location_country"] == country]["days_until_funded"].mean()
 
-avg_days_per_country = sorted(avg_days_per_country.items(), key=lambda kv: kv[1])
+# avg_days_per_country = sorted(avg_days_per_country.items(), key=lambda kv: kv[1])
 
-#country
-sectors = data['sector'].unique()
-avg_days_per_sector = {}
-avg_days_per_sector_lst = []
-for sector in sectors:
-    avg_days_per_sector_lst.append(data[data["sector"] == sector]["days_until_funded"].mean())
-    avg_days_per_sector[sector] = data[data["sector"] == sector]["days_until_funded"].mean()
+# #country
+# sectors = data['sector'].unique()
+# avg_days_per_sector = {}
+# avg_days_per_sector_lst = []
+# for sector in sectors:
+#     avg_days_per_sector_lst.append(data[data["sector"] == sector]["days_until_funded"].mean())
+#     avg_days_per_sector[sector] = data[data["sector"] == sector]["days_until_funded"].mean()
 
-avg_days_per_sector = sorted(avg_days_per_sector.items(), key=lambda kv: kv[1])
+# avg_days_per_sector = sorted(avg_days_per_sector.items(), key=lambda kv: kv[1])
 # %%
