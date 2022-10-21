@@ -44,6 +44,7 @@ Y = []
 testing_X = []
 testing_Y = []
 
+coeffs= [random.randint(-1000000,1000000) for _ in range(33)]
 for i, row in enumerate(reader):
     y = row[1]
     x = [float(val) for val in row]
@@ -51,6 +52,7 @@ for i, row in enumerate(reader):
     # break
     x.pop(0)
     x.pop(0)
+    x = [a*b for a,b in zip(coeffs, x)]
 
     rando = random.random()
     if rando > 0.5:
@@ -105,15 +107,22 @@ for i in range(1, 5000, 50):
     train_accu = acc(y_train_pred, Y_matrix_demeaned)
     train.append(train_accu)
     test.append(test_accu)
-    # print('test',test_accu)
-    # print('train',train_accu)
+    print('test',test_accu)
+    print('train',train_accu)
+    
 # TODO: compute accuracy of your estimates
-# plt.plot(x,y)
-# plt.plot(x,y2)
-# plt.plot(x,y3)
-# plt.plot(x,y4)
-# plt.plot(x, y5)
-# plt.plot(x, y6)
-plt.plot(x,train)
-plt.plot(x,test)
+plt.plot(x,y)
+plt.plot(x,y2)
+plt.plot(x,y3)
+plt.plot(x,y4)
+plt.plot(x, y5)
+plt.plot(x, y6)
+plt.xlabel("Lambda")
+plt.ylabel("Coefficients")
+
+# plt.plot(x,train,label='train')
+# plt.plot(x,test,label='test')
+# plt.xlabel("Lambda")
+# plt.ylabel("MSE")
+# plt.legend(loc="upper left")
 plt.show()
