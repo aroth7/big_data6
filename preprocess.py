@@ -62,8 +62,8 @@ data['is_iraq'] = data['location_country'].apply(lambda x: 1 if 'iraq' in x.lowe
 #            is_iraq= lambda row: 1 if row.location_country is 'Iraq' else 0)
 
 # dummies for country = zambia and country = thailand because those 2 have the lowest avg days_until_funded
-data['is_zambia'] = data['location_country'].apply(lambda x: 1 if 'zambia' in x.lower() else 0)
-data['is_thailand'] = data['location_country'].apply(lambda x: 1 if 'thailand' in x.lower() else 0)
+data['is_nepal'] = data['location_country'].apply(lambda x: 1 if 'nepal' in x.lower() else 0)
+data['is_timor'] = data['location_country'].apply(lambda x: 1 if 'timor' in x.lower() else 0)
 # data =  data.assign(is_zambia= lambda row: 1 if row.location_country is 'Zambia' else 0,
 #            is_thailand= lambda row: 1 if row.location_country is 'Thailand' else 0)
 
@@ -184,7 +184,7 @@ data.to_csv('processed_data.csv')
 # %%
 # code to determine which countries/sectors have higher and lowest avg days_until_funded
 
-#country
+# country
 # countries = data['location_country'].unique()
 # avg_days_per_country = {}
 # avg_days_per_country_lst = []
@@ -194,7 +194,7 @@ data.to_csv('processed_data.csv')
 
 # avg_days_per_country = sorted(avg_days_per_country.items(), key=lambda kv: kv[1])
 
-# #country
+#sector
 # sectors = data['sector'].unique()
 # avg_days_per_sector = {}
 # avg_days_per_sector_lst = []
