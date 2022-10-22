@@ -1,7 +1,9 @@
+# %%
 import csv
 import math
 import numpy as np
 
+# %%
 f = open('demand_monopoly.csv', 'r')
 
 reader = csv.DictReader(f)
@@ -25,11 +27,14 @@ for obs in reader:
 
 f.close()
 
+# %%
 quantity  = np.array(quantity)
 price  = np.array(price)
 
+log_q = np.log(quantity)
+log_p = np.log(price)
+
 print("OLS Regression: ", 
-      np.linalg.lstsq(np.vstack([math.log(quantity), np.ones(len(quantity))]).T, 
-                      math.log(price)))
-
-
+      np.linalg.lstsq(np.vstack([log_q, np.ones(len(quantity))]).T, 
+                      log_p))
+# %%
